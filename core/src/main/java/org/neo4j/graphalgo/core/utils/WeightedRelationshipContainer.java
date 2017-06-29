@@ -2,6 +2,7 @@ package org.neo4j.graphalgo.core.utils;
 
 import org.neo4j.cursor.Cursor;
 import org.neo4j.graphalgo.api.*;
+import org.neo4j.graphalgo.core.Kernel;
 import org.neo4j.kernel.api.StatementConstants;
 import org.neo4j.kernel.internal.GraphDatabaseAPI;
 import org.neo4j.storageengine.api.Direction;
@@ -56,7 +57,7 @@ public class WeightedRelationshipContainer {
         }
         final int[] relationships = data[nodeId];
         for (int i = 0; i < relationships.length; i += 2) {
-            consumer.accept(nodeId, relationships[i], -1L, (double) relationships[i + 1] / multiplicand);
+            consumer.accept(nodeId, relationships[i], StatementConstants.NO_SUCH_RELATIONSHIP_TYPE, (double) relationships[i + 1] / multiplicand);
         }
     }
 
@@ -218,14 +219,14 @@ public class WeightedRelationshipContainer {
             return builder.build();
         }
 
-        private void importNode(WeightedBuilder builder, NodeItem nodeItem) {
+        private void importNode(WeightedBuilder builder, Kernel.NodeItem nodeItem) {
 
             final long neo4jId = nodeItem.id();
             final int nodeId = idMapping.toMappedNodeId(neo4jId);
-            if (null == relationId) {
+            if (StatementConstants.NO_SUCH_RELATIONSHIP_TYPE == relationId) {
                 builder.aim(nodeId, nodeItem.degree(direction));
             } else {
-                builder.aim(nodeId, nodeItem.degree(direction, relationId[0]));
+                builder.aim(nodeId, nodeItem.degree(direction, relationId));
             }
             nodeItem.relationships(direction, relationId).forAll(ri -> {
                 double weight = propertyDefaultValue;

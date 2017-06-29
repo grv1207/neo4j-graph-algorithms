@@ -1,5 +1,6 @@
 package org.neo4j.graphalgo.api;
 
+import org.neo4j.graphalgo.core.Kernel;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.kernel.api.ReadOperations;
 import org.neo4j.kernel.api.Statement;
@@ -35,10 +36,10 @@ public abstract class GraphFactory {
      *
      * @param block the consumer
      */
-    protected final void withReadOps(Consumer<ReadOperations> block) {
+    protected final void withReadOps(Consumer<Kernel> block) {
         try (final Transaction tx = api.beginTx();
              Statement statement = contextBridge.get()) {
-            block.accept(statement.readOperations());
+            block.accept(new Kernel(statement));
             tx.success();
         }
     }

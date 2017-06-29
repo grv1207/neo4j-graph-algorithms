@@ -9,7 +9,7 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.kernel.api.exceptions.EntityNotFoundException;
 import org.neo4j.kernel.api.exceptions.InvalidTransactionTypeKernelException;
 import org.neo4j.kernel.api.exceptions.legacyindex.AutoIndexingKernelException;
-import org.neo4j.kernel.api.exceptions.schema.ConstraintValidationKernelException;
+import org.neo4j.kernel.api.exceptions.schema.ConstraintValidationException;
 import org.neo4j.kernel.api.properties.Property;
 import org.neo4j.kernel.internal.GraphDatabaseAPI;
 
@@ -202,7 +202,7 @@ public class BetweennessCentrality extends Algorithm<BetweennessCentrality> {
                     try {
                         writeOp.nodeSetProperty(originalNodeId, Property.doubleProperty(targetPropertyId, value));
                     } catch (EntityNotFoundException
-                            | ConstraintValidationKernelException
+                            | ConstraintValidationException
                             | InvalidTransactionTypeKernelException
                             | AutoIndexingKernelException e) {
                         throw new RuntimeException(e);
